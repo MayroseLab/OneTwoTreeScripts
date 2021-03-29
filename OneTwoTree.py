@@ -2,6 +2,7 @@ import sys
 
 ONE_TWO_TREE_PATH = '/bioseq/oneTwoTree/'
 #ONE_TWO_TREE_PATH = '/groups/itay_mayrose/michaldrori/PROJECTS/OTT/OTT_V_1p2/'
+DAILY_TESTS_PATH = '/bioseq/bioSequence_scripts_and_constants/daily_tests'
 
 import os
 import csv
@@ -180,8 +181,13 @@ if os.path.exists(email_file):
 					line=line.strip()
 					jobTitle = line.split(':')[1]
 		#email_cmd = "perl /bioseq/oneTwoTree/sendLastEmail.pl --toEmail " + email_var + " --id " + JobName
-		email_start_cmd = "perl " + ONE_TWO_TREE_PATH + "webServer_files/sendFirstEmail.pl --toEmail " + email_var + " --id " + JobName + " --jobTitle " + '"' + jobTitle +'"'
-		email_end_cmd = "perl  " + ONE_TWO_TREE_PATH + "webServer_files/sendLastEmail.pl --toEmail " + email_var + " --id " + JobName + " --jobTitle " + '"' + jobTitle +'"'
+		if jobTitle != 'daily test': 
+			email_start_cmd = "perl " + ONE_TWO_TREE_PATH + "webServer_files/sendFirstEmail.pl --toEmail " + email_var + " --id " + JobName + " --jobTitle " + '"' + jobTitle +'"'
+			email_end_cmd = "perl  " + ONE_TWO_TREE_PATH + "webServer_files/sendLastEmail.pl --toEmail " + email_var + " --id " + JobName + " --jobTitle " + '"' + jobTitle +'"'
+		else:
+			email_start_cmd = ""
+			final_pass_file = os.path.join('/bioseq/data/results/oneTwoTree/',JobName,'JOB_PASS.txt') 
+			email_end_cmd = f'python {ONE_TWO_TREE_PATH}webServer_files/write_daily_test.py {DAILY_TESTS_PATH} oneTwoTree \"http://onetwotree.tau.ac.il/results.html?jobId={JobName}&jobTitle={jobTitle.replace(" ", "%20")}\" {final_pass_file}'
 else:
 	email_start_cmd = ""
 	email_end_cmd = ""
